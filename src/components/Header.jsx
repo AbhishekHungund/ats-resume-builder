@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Download, FileText, FileDown, RefreshCw, Settings, PenTool } from 'lucide-react';
+import { Download, FileText, FileDown, RefreshCw, Settings, PenTool, LayoutTemplate } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useResumeStore } from '../hooks/useResumeStore';
 import SettingsModal from './SettingsModal';
+import TemplateGallery from './TemplateGallery';
 
-const Header = ({ onDownloadPdf, onDownloadDocx }) => {
+const Header = ({ onNavigateHome, onDownloadPdf, onDownloadDocx }) => {
   const { resetResume, template, setTemplate, appSettings, setDocumentMode } = useResumeStore();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
   const { documentMode } = appSettings;
 
@@ -20,10 +22,12 @@ const Header = ({ onDownloadPdf, onDownloadDocx }) => {
   return (
     <>
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50 px-6 py-4 flex flex-col sm:flex-row justify-between items-center shadow-sm">
-        <div className="flex items-center gap-3 mb-4 sm:mb-0">
-          <div className="bg-gradient-to-br from-blue-600 to-indigo-700 p-2.5 rounded-xl text-white shadow-md">
-            <FileText size={24} />
-          </div>
+        <div 
+          className="flex items-center gap-3 mb-4 sm:mb-0 cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={onNavigateHome}
+          title="Return to Home"
+        >
+          <img src="/resumate-icon.svg" alt="ResuMate Logo" className="w-9 h-9 drop-shadow-sm" />
           <div>
             <h1 className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-800 tracking-tight">ResuMate</h1>
             <p className="text-[11px] text-gray-500 font-bold uppercase tracking-widest">Free & ATS-Optimized</p>
@@ -56,22 +60,13 @@ const Header = ({ onDownloadPdf, onDownloadDocx }) => {
             <Settings size={20} />
           </button>
 
-          <div className="relative">
-          <select 
-            value={template} 
-            onChange={(e) => setTemplate(e.target.value)}
-            className="appearance-none bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 pr-8 hover:bg-gray-100 transition-colors cursor-pointer font-bold"
+          <button 
+            onClick={() => setIsGalleryOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:text-indigo-800 rounded-lg border border-indigo-100 transition-colors font-bold shadow-sm"
           >
-            <option value="classic">Classic (ATS Safe)</option>
-            <option value="modern">Modern (Creative)</option>
-            <option value="minimal">Minimal (Clean)</option>
-            <option value="executive">Executive (Senior)</option>
-            <option value="creative">Creative (Design)</option>
-          </select>
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-          </div>
-        </div>
+            <LayoutTemplate size={18} />
+            <span className="hidden sm:inline">Templates</span>
+          </button>
 
         <button 
           onClick={handleReset}
@@ -101,6 +96,7 @@ const Header = ({ onDownloadPdf, onDownloadDocx }) => {
       </div>
     </header>
     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+    <TemplateGallery isOpen={isGalleryOpen} onClose={() => setIsGalleryOpen(false)} />
   </>
   );
 };

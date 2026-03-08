@@ -3,30 +3,41 @@ import { Toaster, toast } from 'react-hot-toast';
 import Header from './components/Header';
 import EditorPanel from './components/EditorPanel';
 import PreviewPanel from './components/PreviewPanel';
+import Home from './components/Home';
 import { exportToPdf } from './utils/exportPdf';
 import { exportToDocx } from './utils/exportDocx';
 import { useResumeStore } from './hooks/useResumeStore';
 
 function App() {
+  const [currentView, setCurrentView] = useState('home'); // 'home' or 'builder'
   const [activeTab, setActiveTab] = useState('editor'); // for mobile switching
   const { resumeData } = useResumeStore();
 
   const handleDownloadPdf = async () => {
     toast.loading('Generating PDF...', { id: 'pdf' });
-    await exportToPdf('resume-preview', 'SmartATS_Resume.pdf');
+    await exportToPdf('resume-preview', 'ResuMate_Resume.pdf');
     toast.success('PDF Downloaded!', { id: 'pdf' });
   };
 
   const handleDownloadDocx = async () => {
     toast.loading('Generating DOCX...', { id: 'docx' });
-    await exportToDocx(resumeData, 'SmartATS_Resume.docx');
+    await exportToDocx(resumeData, 'ResuMate_Resume.docx');
     toast.success('DOCX Downloaded!', { id: 'docx' });
   };
+
+  if (currentView === 'home') {
+    return (
+      <>
+        <Toaster position="top-right" />
+        <Home onStart={() => setCurrentView('builder')} />
+      </>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col font-sans">
       <Toaster position="top-right" />
-      <Header onDownloadPdf={handleDownloadPdf} onDownloadDocx={handleDownloadDocx} />
+      <Header onNavigateHome={() => setCurrentView('home')} onDownloadPdf={handleDownloadPdf} onDownloadDocx={handleDownloadDocx} />
       
       {/* Mobile Tabs */}
       <div className="md:hidden flex border-b bg-white sticky top-[72px] z-40">

@@ -1,35 +1,12 @@
-import React, { useState } from 'react';
-import { FileText, Wand2, Loader2 } from 'lucide-react';
+import React from 'react';
+import { FileText } from 'lucide-react';
 import { useResumeStore } from '../../hooks/useResumeStore';
-import { checkGrammarAndSpelling } from '../../services/aiService';
-import toast from 'react-hot-toast';
 
 const ProfessionalSummary = () => {
   const { resumeData, updateProfessionalSummary } = useResumeStore();
   const summary = resumeData.professionalSummary || '';
-  const [isImproving, setIsImproving] = useState(false);
 
   const wordCount = summary.trim().split(/\s+/).filter(w => w.length > 0).length;
-
-  const handleImproveSummary = async () => {
-    if (!summary || summary.trim().length === 0) {
-      toast.error('Please write something in the summary first to improve it.');
-      return;
-    }
-
-    setIsImproving(true);
-    const toastId = toast.loading('Improving grammar and tone...');
-
-    try {
-      const improvedText = await checkGrammarAndSpelling(summary);
-      updateProfessionalSummary(improvedText);
-      toast.success('Summary improved successfully!', { id: toastId });
-    } catch (error) {
-      toast.error(error.message, { id: toastId });
-    } finally {
-      setIsImproving(false);
-    }
-  };
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6 transition-all hover:shadow-md">
@@ -45,20 +22,9 @@ const ProfessionalSummary = () => {
         </span>
       </div>
       <div className="p-6">
-        <div className="flex justify-between items-end mb-2">
-          <label className="block text-sm font-semibold text-gray-700 max-w-[70%]">
-            Write a short, impactful summary highlighting your key achievements and career goals.
-          </label>
-          <button 
-            onClick={handleImproveSummary}
-            disabled={isImproving || !summary.trim()}
-            className="flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-100 hover:bg-emerald-200 px-2.5 py-1.5 rounded-md transition-colors disabled:opacity-50 disabled:hover:bg-emerald-100"
-            title="Fix grammar, spelling, and tone with AI"
-          >
-            {isImproving ? <Loader2 size={14} className="animate-spin" /> : <Wand2 size={14} />}
-            Enhance with AI
-          </button>
-        </div>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          Write a short, impactful summary highlighting your key achievements and career goals.
+        </label>
         <textarea 
           value={summary}
           onChange={(e) => updateProfessionalSummary(e.target.value)}
